@@ -59,12 +59,11 @@
                                 <td><a href="<c:url value='/customer/order/${order.id}'/>">#<c:out value="${order.orderNumber}"/></a></td>
                                 <td>
                                     <c:if test="${not empty order.orderDate}">
-                                        ${order.orderDate.format(dateFormatter)} <%-- Usa la variabile dal model --%>
+                                        ${order.orderDate.format(dateFormatter)}
                                     </c:if>
                                 </td>
                                 <td class="text-right"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="€ "/></td>
                                 <td>
-                                        <%-- Potremmo usare badge colorati per lo stato --%>
                                     <span class="badge badge-${order.status == 'DELIVERED' or order.status == 'COMPLETED' ? 'success' : (order.status == 'CANCELLED' or order.status == 'PAYMENT_FAILED' ? 'danger' : (order.status == 'SHIPPED' ? 'info' : 'warning'))}">
                                                 <c:out value="${order.status}"/> <%-- TODO: Tradurre/Formattare meglio lo stato --%>
                                             </span>

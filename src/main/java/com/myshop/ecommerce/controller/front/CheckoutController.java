@@ -23,11 +23,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-// L'import Optional non è più necessario se si usa orElseThrow()
-// import java.util.Optional;
+
 
 @Controller
-@RequestMapping("/checkout") // Tutte le richieste a questo controller iniziano con /checkout
+@RequestMapping("/checkout")
 public class CheckoutController {
 
     private static final Logger log = LoggerFactory.getLogger(CheckoutController.class);
@@ -60,7 +59,7 @@ public class CheckoutController {
         }
 
         model.addAttribute("cart", cart);
-        if (!model.containsAttribute("shippingAddressDto")) { // Evita sovrascrittura se viene da un POST con errori
+        if (!model.containsAttribute("shippingAddressDto")) {
             model.addAttribute("shippingAddressDto", new ShippingAddressDto());
         }
 
@@ -86,8 +85,8 @@ public class CheckoutController {
 
         if (bindingResult.hasErrors()) {
             log.warn("Errore di validazione per indirizzo di spedizione: {}", bindingResult.getAllErrors());
-            model.addAttribute("cart", cart); // Ripassa il carrello alla vista per il riepilogo
-            return "front/checkout"; // Ritorna al form mostrando gli errori
+            model.addAttribute("cart", cart);
+            return "front/checkout";
         }
 
         User currentUser = userRepository.findByUsername(currentUserDetails.getUsername())
@@ -96,7 +95,7 @@ public class CheckoutController {
         try {
             Order createdOrder = orderService.createOrder(cart, currentUser, shippingAddressDto);
             session.setAttribute("pendingOrderId", createdOrder.getId());
-            session.removeAttribute("pendingShippingAddress"); // Non più necessario se l'abbiamo usato
+            session.removeAttribute("pendingShippingAddress");
 
             log.info("Ordine ID {} creato per utente {}. Reindirizzamento a conferma pagamento.", createdOrder.getId(), currentUser.getUsername());
             redirectAttributes.addFlashAttribute("checkoutMessage", "Il tuo ordine è stato registrato. Conferma e procedi al pagamento.");
@@ -105,12 +104,12 @@ public class CheckoutController {
         } catch (IllegalStateException | ResourceNotFoundException e) {
             log.warn("Errore durante la creazione dell'ordine: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("cartErrorMessage", e.getMessage());
-            return "redirect:/checkout"; // Torna alla pagina di checkout per correggere (es. stock)
+            return "redirect:/checkout";
         } catch (Exception e) {
             log.error("Errore imprevisto durante la creazione dell'ordine per l'utente {}", currentUser.getUsername(), e);
             model.addAttribute("errorMessage", "Si è verificato un errore imprevisto durante la creazione dell'ordine.");
             model.addAttribute("cart", cart);
-            return "front/checkout"; // Ritorna al form con un messaggio di errore generico
+            return "front/checkout";
         }
     }
 
@@ -127,24 +126,20 @@ public class CheckoutController {
         if (pendingOrderIdFromSession == null || !pendingOrderIdFromSession.equals(orderId)) {
             log.warn("ID ordine in sessione ({}) non corrisponde a ID ordine URL ({}) per utente {}. Reindirizzamento.",
                     pendingOrderIdFromSession, orderId, currentUserDetails.getUsername());
-            // Reindirizza a un punto sicuro, come la dashboard utente o il carrello.
-            // Questo previene che l'utente veda la pagina di conferma per un ordine vecchio/diverso
-            // se manipola l'URL o se la sessione è cambiata.
-            return "redirect:/customer/orders"; // Assumendo che esista o sarà creato
+
+            return "redirect:/customer/orders";
         }
 
         try {
             Order order = orderService.findOrderById(orderId)
                     .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
-            // Verifica aggiuntiva: l'ordine appartiene all'utente corrente?
             if (!order.getUser().getUsername().equals(currentUserDetails.getUsername())) {
                 log.warn("Tentativo di accesso all'ordine ID {} da parte di utente non autorizzato ({} vs {})",
                         orderId, currentUserDetails.getUsername(), order.getUser().getUsername());
-                return "redirect:/"; // O una pagina di errore di accesso negato
+                return "redirect:/";
             }
 
-            // Verifica che lo stato dell'ordine sia PENDING (o appropriato per questa fase)
             if (order.getStatus() != OrderStatus.PENDING) {
                 log.warn("Tentativo di accedere alla pagina di conferma per l'ordine ID {} che non è in stato PENDING (stato attuale: {}). Utente: {}",
                         orderId, order.getStatus(), currentUserDetails.getUsername());
@@ -160,7 +155,7 @@ public class CheckoutController {
 
         } catch (ResourceNotFoundException e) {
             log.warn("Ordine ID {} non trovato per la pagina di conferma.", orderId);
-            return "redirect:/"; // O una pagina di errore 404 ordini
+            return "redirect:/";
         }
     }
 
@@ -181,22 +176,19 @@ public class CheckoutController {
             if (!order.getUser().getUsername().equals(currentUser.getUsername())) {
                 log.warn("Tentativo non autorizzato di annullare l'ordine ID {} da parte dell'utente {}", orderId, currentUser.getUsername());
                 redirectAttributes.addFlashAttribute("errorMessage", "Non sei autorizzato ad annullare questo ordine.");
-                return "redirect:/"; // O alla cronologia ordini
+                return "redirect:/";
             }
 
             if (order.getStatus() == OrderStatus.PENDING) {
                 order.setStatus(OrderStatus.CANCELLED);
-                // TODO: Considerare di rimettere a disposizione lo stock dei prodotti qui.
-                // Questo richiederebbe di iterare sugli orderItems e aggiornare lo stock in ProductRepository.
-                // Per ora, cambiamo solo lo stato.
-                orderService.saveOrder(order); // Assicurati che OrderService abbia un metodo save/update
-                session.removeAttribute("pendingOrderId"); // Rimuovi dalla sessione
+                orderService.saveOrder(order);
+                session.removeAttribute("pendingOrderId");
                 redirectAttributes.addFlashAttribute("successMessage", "Ordine #" + order.getOrderNumber() + " annullato con successo.");
                 log.info("Ordine ID {} (#{}) annullato dall'utente {}", order.getId(), order.getOrderNumber(), currentUser.getUsername());
-                return "redirect:/cart"; // O alla home o /customer/orders
+                return "redirect:/cart";
             } else {
                 redirectAttributes.addFlashAttribute("infoMessage", "Impossibile annullare l'ordine perché non è più in attesa di pagamento.");
-                return "redirect:/customer/orders"; // O alla pagina dettaglio ordine
+                return "redirect:/customer/orders";
             }
         } catch (ResourceNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Ordine non trovato.");
@@ -204,7 +196,7 @@ public class CheckoutController {
         } catch (Exception e) {
             log.error("Errore durante l'annullamento dell'ordine ID {}", orderId, e);
             redirectAttributes.addFlashAttribute("errorMessage", "Errore durante l'annullamento dell'ordine.");
-            return "redirect:/checkout/confirm/" + orderId; // Torna alla pagina di conferma se c'è un errore imprevisto
+            return "redirect:/checkout/confirm/" + orderId;
         }
     }
 }

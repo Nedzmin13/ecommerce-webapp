@@ -7,7 +7,7 @@ import com.myshop.ecommerce.exception.ResourceNotFoundException;
 import com.myshop.ecommerce.model.Cart;
 import com.myshop.ecommerce.model.CartItem;
 import com.myshop.ecommerce.repository.*;
-import com.myshop.ecommerce.service.EmailService; // Assicurati che questo import sia presente
+import com.myshop.ecommerce.service.EmailService;
 import com.myshop.ecommerce.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository,
                             ProductRepository productRepository,
-                            EmailService emailService) { // Iniezione nel costruttore
+                            EmailService emailService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.emailService = emailService; // Assegnazione
@@ -90,7 +90,6 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> orderOpt = orderRepository.findById(orderId);
         if (orderOpt.isPresent()) {
             Order order = orderOpt.get();
-            // Forza l'inizializzazione delle collezioni/oggetti lazy
             order.getOrderItems().size();
             if (order.getShipping() != null) order.getShipping().getAddressLine1();
             if (order.getPayment() != null) order.getPayment().getTransactionId();
@@ -117,15 +116,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true) // Modificato per coerenza con JpaRepository se non ci sono modifiche
+    @Transactional(readOnly = true)
     public Page<Order> findAllOrdersPaginated(Pageable pageable) {
         log.debug("Recupero tutti gli ordini paginati. Pageable: {}", pageable);
         return orderRepository.findAll(pageable);
     }
 
-    // --- METODO updateOrderStatus COMPLETO CON INVIO EMAIL ---
     @Override
-    @Transactional // Operazione di aggiornamento, quindi transazionale
+    @Transactional
     public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
         log.debug("Tentativo di aggiornare lo stato dell'ordine ID {} a {}", orderId, newStatus);
 
@@ -135,25 +133,20 @@ public class OrderServiceImpl implements OrderService {
         OrderStatus oldStatus = order.getStatus();
         log.info("Ordine ID {}: cambio stato da {} a {}", orderId, oldStatus, newStatus);
         order.setStatus(newStatus);
-        // order.setUpdatedAt(LocalDateTime.now()); // @UpdateTimestamp in Order entity dovrebbe gestirlo automaticamente al save
 
-        Order updatedOrder = orderRepository.save(order); // Salva l'ordine con il nuovo stato
+        Order updatedOrder = orderRepository.save(order);
 
-        // Invia email di notifica se lo stato è cambiato
         if (oldStatus != newStatus) {
             try {
-                // Ricarichiamo l'ordine per assicurarci che tutte le associazioni
-                // necessarie per l'email siano caricate, specialmente se lazy.
-                // Il nostro findOrderById già fa questo "eager fetching" manuale.
+
                 Order orderForEmail = this.findOrderById(updatedOrder.getId())
-                        .orElse(updatedOrder); // Fallback all'ordine già in memoria se non trovato (improbabile)
+                        .orElse(updatedOrder);
 
                 emailService.sendOrderStatusUpdateEmail(orderForEmail);
                 log.info("Email di aggiornamento stato inviata per l'ordine ID {}", updatedOrder.getId());
             } catch (Exception e) {
                 log.error("Fallito invio email di aggiornamento stato per l'ordine ID {}: {}", updatedOrder.getId(), e.getMessage(), e);
-                // Non far fallire la transazione principale per un errore di invio email
-                // Considerare di mettere l'invio email in una coda o un processo asincrono in un'app reale.
+
             }
         }
         return updatedOrder;

@@ -4,7 +4,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%-- Non importiamo DateTimeFormatter qui, usiamo la variabile 'dateFormatter' dal controller --%>
 
 <!DOCTYPE html>
 <html lang="it">
@@ -82,7 +81,7 @@
                     <button type="button" class="btn btn-primary mr-2" onclick="showEditProfileForm()">
                         <i class="fas fa-edit"></i> Modifica Dati
                     </button>
-                    <c:if test="${user.provider == 'LOCAL'}"> <%-- Mostra solo per utenti LOCAL --%>
+                    <c:if test="${user.provider == 'LOCAL'}">
                         <button type="button" class="btn btn-secondary" onclick="showChangePasswordForm()">
                             <i class="fas fa-key"></i> Cambia Password
                         </button>
@@ -165,13 +164,11 @@
         if (changePasswordDiv) changePasswordDiv.style.display = 'block';
     }
 
-    // Controlla se ci sono errori specifici per mostrare il form corretto al caricamento della pagina
-    // Questo viene dopo un POST fallito che ricarica la pagina.
+
     <c:if test="${not empty org.springframework.validation.BindingResult.userProfileDto && org.springframework.validation.BindingResult.userProfileDto.hasErrors()}">
     showEditProfileForm();
     </c:if>
     <c:if test="${(not empty org.springframework.validation.BindingResult.changePasswordDto && org.springframework.validation.BindingResult.changePasswordDto.hasErrors()) || not empty showChangePasswordFormWithErrors}">
-    // 'showChangePasswordFormWithErrors' è un flag che potremmo impostare nel controller se un errore non è legato a un campo specifico
     showChangePasswordForm();
     </c:if>
 </script>

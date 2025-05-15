@@ -8,7 +8,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>MyShop E-commerce</title>
-    <!-- Bootstrap 4 CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </head>
 <body>
@@ -26,14 +25,12 @@
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value='/products'/>">Prodotti</a> <%-- Link al catalogo --%>
             </li>
-            <%-- Link Admin visibile solo a ROLE_ADMIN --%>
             <sec:authorize access="hasRole('ADMIN')">
                 <li class="nav-item">
                     <a class="nav-link" href="<c:url value='/admin/dashboard'/>">Admin Dashboard</a>
                 </li>
             </sec:authorize>
-            <%-- Link Area Cliente visibile solo se loggati --%>
-            <sec:authorize access="isAuthenticated() and !hasRole('ADMIN')"> <%-- Mostra solo a CUSTOMER --%>
+            <sec:authorize access="isAuthenticated() and !hasRole('ADMIN')">
                 <li class="nav-item">
                     <a class="nav-link" href="<c:url value='/customer/profile'/>">Area Cliente</a>
                 </li>
@@ -41,7 +38,6 @@
 
         </ul>
         <ul class="navbar-nav">
-            <%-- Se l'utente NON è autenticato, mostra Login/Registrati --%>
             <sec:authorize access="!isAuthenticated()">
                 <li class="nav-item">
                     <a class="nav-link" href="<c:url value='/login'/>">Login</a>
@@ -51,11 +47,10 @@
                 </li>
             </sec:authorize>
 
-            <%-- Se l'utente È autenticato, mostra nome utente e Logout --%>
             <sec:authorize access="isAuthenticated()">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <sec:authentication property="principal.username" /> <%-- Mostra username --%>
+                        <sec:authentication property="principal.username" />
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                         <sec:authorize access="hasRole('CUSTOMER')">
@@ -68,7 +63,6 @@
                             <div class="dropdown-divider"></div>
                         </sec:authorize>
 
-                            <%-- Logout Form (POST è più sicuro per logout) --%>
                         <form id="logoutForm" method="post" action="<c:url value='/logout'/>" style="display: none;">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         </form>
@@ -76,7 +70,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Carrello (0)</a> <%-- Placeholder Carrello --%>
+                    <a class="nav-link" href="#">Carrello (0)</a>
                 </li>
             </sec:authorize>
         </ul>
@@ -87,7 +81,6 @@
     <h1>Benvenuto su MyShop!</h1>
     <p>Il tuo negozio online di fiducia per l'elettronica.</p>
 
-    <%-- Messaggio di successo login --%>
     <c:if test="${param.loginSuccess != null}">
         <div class="alert alert-success" role="alert">
             Login effettuato con successo!
@@ -98,7 +91,6 @@
 
 </div>
 
-<!-- jQuery e Bootstrap Bundle (include Popper) via CDN -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

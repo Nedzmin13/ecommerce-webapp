@@ -1,7 +1,7 @@
 package com.myshop.ecommerce.controller.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference; // Necessario per deserializzare Map da JSON
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myshop.ecommerce.entity.Order;
 import com.myshop.ecommerce.entity.Payment;
@@ -19,7 +19,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import com.myshop.ecommerce.service.EmailService; // Importa EmailService
+import com.myshop.ecommerce.service.EmailService;
 
 
 import javax.servlet.http.HttpSession;
@@ -38,7 +38,7 @@ public class PayPalController {
 
     private static final Logger log = LoggerFactory.getLogger(PayPalController.class);
 
-    private final EmailService emailService; // Inietta EmailService
+    private final EmailService emailService;
 
 
     private final OrderService orderService;
@@ -60,7 +60,7 @@ public class PayPalController {
         this.objectMapper = objectMapper;
         this.payPalAuthService = payPalAuthService;
         this.cartService = cartService;
-        this.emailService = emailService; // Inizializza
+        this.emailService = emailService;
 
     }
 
@@ -220,30 +220,6 @@ public class PayPalController {
             shippingDetails.address = shippingAddress;
             purchaseUnit.shipping = shippingDetails;
 
-            // (Opzionale) Aggiungere items
-            // List<PayPalItem> payPalItems = new ArrayList<>();
-            // BigDecimal calculatedItemTotal = BigDecimal.ZERO;
-            // for (com.myshop.ecommerce.entity.OrderItem item : myShopOrder.getOrderItems()) {
-            //     PayPalMoney itemUnitPrice = new PayPalMoney();
-            //     itemUnitPrice.currency_code = "EUR";
-            //     itemUnitPrice.value = item.getPricePerUnit().setScale(2, RoundingMode.HALF_UP).toString();
-            //     PayPalItem payPalItem = new PayPalItem();
-            //     payPalItem.name = item.getProduct().getName().substring(0, Math.min(item.getProduct().getName().length(), 127));
-            //     payPalItem.quantity = String.valueOf(item.getQuantity());
-            //     payPalItem.unit_amount = itemUnitPrice;
-            //     payPalItems.add(payPalItem);
-            //     calculatedItemTotal = calculatedItemTotal.add(item.getPricePerUnit().multiply(new BigDecimal(item.getQuantity())));
-            // }
-            // if (!payPalItems.isEmpty()) {
-            //     purchaseUnit.items = payPalItems;
-            //     PayPalMoney itemTotalMoney = new PayPalMoney();
-            //     itemTotalMoney.currency_code = "EUR";
-            //     itemTotalMoney.value = calculatedItemTotal.setScale(2, RoundingMode.HALF_UP).toString();
-            //     PayPalAmountBreakdown breakdown = new PayPalAmountBreakdown();
-            //     breakdown.item_total = itemTotalMoney;
-            //     amount.breakdown = breakdown;
-            // }
-
 
             payPalOrderRequest.purchase_units = Collections.singletonList(purchaseUnit);
 
@@ -294,7 +270,6 @@ public class PayPalController {
             this.log.error("HttpClientErrorException PayPal (v2 HTTP): Status {}, Body {}, Headers {}", e.getStatusCode(), e.getResponseBodyAsString(), e.getResponseHeaders(), e);
             String errorMessage = e.getResponseBodyAsString();
             try {
-                // Tenta di estrarre un messaggio più pulito dal JSON di errore
                 Map<String, Object> errorMap = this.objectMapper.readValue(errorMessage, new TypeReference<Map<String, Object>>() {});
                 if (errorMap.containsKey("message")) {
                     errorMessage = (String) errorMap.get("message");
@@ -310,9 +285,7 @@ public class PayPalController {
             this.log.error("Errore imprevisto creazione ordine PayPal (v2 HTTP): {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Errore imprevisto durante la comunicazione con PayPal."));
         }
-        // Questo return di fallback non dovrebbe mai essere raggiunto se la logica try/catch è completa.
-        // Ma il compilatore lo richiede per garantire che tutti i percorsi abbiano un return.
-        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Errore server non gestito durante la creazione dell'ordine PayPal."));
+
     }
 
 
@@ -343,7 +316,7 @@ public class PayPalController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(accessToken);
-            HttpEntity<String> requestEntity = new HttpEntity<>("{}", headers); // Corpo JSON vuoto per cattura
+            HttpEntity<String> requestEntity = new HttpEntity<>("{}", headers);
             String captureUrl = getPayPalApiBaseUrl() + "/v2/checkout/orders/" + paypalOrderId + "/capture";
 
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(captureUrl, requestEntity, String.class);
@@ -356,7 +329,7 @@ public class PayPalController {
                     String transactionId = captureResponse.id;
                     if (captureResponse.purchase_units != null && !captureResponse.purchase_units.isEmpty() &&
                             captureResponse.purchase_units.get(0).payments != null &&
-                            captureResponse.purchase_units.get(0).payments.captures != null && // Aggiunto controllo null per captures
+                            captureResponse.purchase_units.get(0).payments.captures != null &&
                             !captureResponse.purchase_units.get(0).payments.captures.isEmpty()) {
                         transactionId = captureResponse.purchase_units.get(0).payments.captures.get(0).id;
                     }
@@ -378,13 +351,11 @@ public class PayPalController {
                     session.removeAttribute("pendingOrderId");
 
                     // TODO: Inviare email di conferma ordine
-                    // this.emailService.sendOrderConfirmationEmail(myShopOrder);
 
                     try {
-                        this.emailService.sendOrderConfirmationEmail(myShopOrder); // Chiamata al servizio email
+                        this.emailService.sendOrderConfirmationEmail(myShopOrder);
                         log.info("Email di conferma ordine inviata per l'ordine ID {}", myShopOrder.getId());
                     } catch (Exception e) {
-                        // Logga l'errore ma non far fallire la risposta al client per questo
                         log.error("Fallito invio email di conferma per l'ordine ID {}: {}", myShopOrder.getId(), e.getMessage());
                     }
 
@@ -408,8 +379,6 @@ public class PayPalController {
             this.log.error("Errore imprevisto cattura pagamento PayPal: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Errore imprevisto durante la finalizzazione del pagamento."));
         }
-        // Ritorno di fallback per il metodo capturePayPalOrder
-        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Errore server non gestito durante la cattura del pagamento PayPal."));
 
     }
 }

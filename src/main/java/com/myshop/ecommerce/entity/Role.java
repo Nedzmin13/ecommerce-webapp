@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString // Attenzione con le relazioni bidirezionali, potrebbe causare loop. Escludere se necessario.
+@ToString
 public class Role {
 
     @Id

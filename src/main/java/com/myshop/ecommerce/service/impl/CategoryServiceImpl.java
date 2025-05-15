@@ -4,8 +4,7 @@ import com.myshop.ecommerce.entity.Category;
 import com.myshop.ecommerce.exception.ResourceNotFoundException;
 import com.myshop.ecommerce.repository.CategoryRepository;
 import com.myshop.ecommerce.service.CategoryService;
-// Rimuovi import SlugUtil
-// import com.myshop.ecommerce.util.SlugUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,23 +39,17 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id);
     }
 
-    // Metodo findBySlug rimosso
 
     @Override
     @Transactional
     public Category createCategory(String name, String description) {
-        // Rimuovi logica slug
-        // String slug = SlugUtil.toSlug(name);
-        // if (categoryRepository.existsBySlug(slug)) {
-        //     throw new IllegalArgumentException("Errore: Una categoria con slug simile esiste già.");
-        // }
+
         if (categoryRepository.existsByName(name)) {
             log.warn("Tentativo di creare categoria con nome duplicato: {}", name);
             throw new DataIntegrityViolationException("Errore: Una categoria con il nome '" + name + "' esiste già.");
         }
 
-        Category category = new Category(name, description); // Usa nuovo costruttore
-        // category.setSlug(slug); // Rimosso
+        Category category = new Category(name, description);
         log.info("Creazione nuova categoria: {}", name);
         try {
             return categoryRepository.save(category);
@@ -72,22 +65,15 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
 
-        // Verifica se il nuovo nome è già usato da ALTRE categorie
         Optional<Category> existingByName = categoryRepository.findByName(name);
         if (existingByName.isPresent() && !existingByName.get().getId().equals(id)) {
             log.warn("Tentativo di aggiornare categoria ID {} con nome duplicato: {}", id, name);
             throw new DataIntegrityViolationException("Errore: Nome categoria già in uso da un'altra categoria.");
         }
-        // Rimuovi controllo slug
-        // String newSlug = SlugUtil.toSlug(name);
-        // Optional<Category> existingBySlug = categoryRepository.findBySlug(newSlug);
-        // if (existingBySlug.isPresent() && !existingBySlug.get().getId().equals(id)) {
-        //     throw new IllegalArgumentException("Errore: Slug generato già in uso.");
-        // }
+
 
         category.setName(name);
-        category.setDescription(description); // Aggiorna descrizione
-        // category.setSlug(newSlug); // Rimosso
+        category.setDescription(description);
 
         log.info("Aggiornamento categoria ID {}: nuovo nome {}", id, name);
         try {
@@ -103,7 +89,6 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
-        // La logica della cancellazione a cascata dei prodotti rimane invariata
         log.warn("Cancellazione categoria ID {} ('{}') e dei relativi prodotti (a causa della cascata)", id, category.getName());
         categoryRepository.delete(category);
     }
@@ -113,10 +98,8 @@ public class CategoryServiceImpl implements CategoryService {
     public Category findOrCreateByName(String name, String description) {
         Optional<Category> existingCategory = categoryRepository.findByName(name);
         if (existingCategory.isPresent()) {
-            // Potremmo voler aggiornare la descrizione se quella fornita è diversa? Per ora non lo facciamo.
             return existingCategory.get();
         } else {
-            // Crea la categoria se non esiste
             return createCategory(name, description);
         }
     }

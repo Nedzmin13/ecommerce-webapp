@@ -10,7 +10,7 @@ import com.myshop.ecommerce.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; // Importa per gestire errori di unicità username
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true) // Solo lettura, non modifica dati
+    @Transactional(readOnly = true)
     public boolean checkCurrentPassword(Long userId, String currentPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
@@ -106,15 +106,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        // Solo gli utenti LOCAL possono cambiare la password in questo modo.
-        // Gli utenti OAuth2 gestiscono la password tramite il provider.
+
         if (user.getProvider() != AuthProvider.LOCAL) {
             log.warn("Tentativo di cambiare password per utente non LOCAL (ID: {}, Provider: {}). Operazione non permessa.", userId, user.getProvider());
             throw new IllegalArgumentException("La password per gli account social non può essere cambiata qui.");
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
-        // @UpdateTimestamp dovrebbe aggiornare updatedAt
         userRepository.save(user);
         log.info("Password aggiornata per utente ID: {}", userId);
     }
@@ -137,10 +135,8 @@ public class UserServiceImpl implements UserService {
                         user.getUsername(), email, user.getProvider(), provider);
                 user.setProvider(provider);
                 user.setProviderId(providerId);
-                // Non cambiamo la password se l'utente esisteva già, specialmente se era LOCAL.
-                // La password originale (se LOCAL) rimane, ma il login avverrà tramite OAuth.
+
             }
-            // Aggiorna nome/cognome solo se quelli forniti da OAuth sono presenti e quelli esistenti erano vuoti/null
             if ((user.getFirstName() == null || user.getFirstName().isEmpty()) && givenFirstNameFromProvider != null && !givenFirstNameFromProvider.isEmpty()) {
                 user.setFirstName(givenFirstNameFromProvider);
             }
@@ -163,18 +159,16 @@ public class UserServiceImpl implements UserService {
             }
             String username = usernameBase;
             int count = 0;
-            // Limita la lunghezza massima dell'usernameBase per lasciare spazio ai numeri
-            int maxBaseLength = 45; // Esempio: 50 (max) - 2 (underscore+numero) - 3 (spazio per numeri più grandi)
+            int maxBaseLength = 45;
             if (usernameBase.length() > maxBaseLength) {
                 usernameBase = usernameBase.substring(0, maxBaseLength);
             }
-            username = usernameBase; // Riassegna dopo eventuale troncamento
+            username = usernameBase;
 
             while (userRepository.existsByUsername(username)) {
                 count++;
                 username = usernameBase + count;
                 if (username.length() > 50) {
-                    // Se nonostante tutto diventa troppo lungo, usa UUID. Questo è un fallback estremo.
                     username = "user_" + UUID.randomUUID().toString().substring(0, Math.min(8, 50 - "user_".length()));
                     log.warn("Username generato con UUID per evitare collisioni/lunghezza: {}", username);
                     break; // Esci dal while dopo aver generato con UUID
@@ -185,7 +179,7 @@ public class UserServiceImpl implements UserService {
 
             user.setFirstName(givenFirstNameFromProvider != null ? givenFirstNameFromProvider : "");
             user.setLastName(givenLastNameFromProvider != null ? givenLastNameFromProvider : "");
-            user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString())); // Password fittizia
+            user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
 
             Role userRole = roleRepository.findByName("ROLE_CUSTOMER")
                     .orElseThrow(() -> {
@@ -202,14 +196,14 @@ public class UserServiceImpl implements UserService {
                 user.getUsername(), user.getEmail(), user.getProvider(), user.getProviderId(), user.getFirstName(), user.getLastName());
 
         try {
-            User savedUser = userRepository.save(user); // Salva l'utente (nuovo o aggiornato)
+            User savedUser = userRepository.save(user);
             if(isNewUser) {
                 log.info("Nuovo utente OAuth2 salvato con successo nel DB. ID Utente: {}, Username: {}", savedUser.getId(), savedUser.getUsername());
             } else {
                 log.info("Utente OAuth2 esistente aggiornato con successo nel DB. ID Utente: {}, Username: {}", savedUser.getId(), savedUser.getUsername());
             }
             return savedUser;
-        } catch (DataIntegrityViolationException e) { // Es. username duplicato nonostante i controlli
+        } catch (DataIntegrityViolationException e) {
             log.error("!!! ERRORE DI INTEGRITA' DATI DURANTE IL SALVATAGGIO DELL'UTENTE OAUTH2 ({}) NEL DATABASE !!!: {}", user.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Impossibile salvare l'utente OAuth2 a causa di un conflitto di dati (es. username duplicato): " + e.getMessage(), e);
         } catch (Exception e) {
@@ -236,13 +230,12 @@ public class UserServiceImpl implements UserService {
         }
 
         if (changed) {
-            // L'annotazione @UpdateTimestamp su User dovrebbe aggiornare updatedAt automaticamente
             User updatedUser = userRepository.save(user);
             log.info("Profilo utente ID {} aggiornato con successo. Nome: {}, Cognome: {}", userId, updatedUser.getFirstName(), updatedUser.getLastName());
             return updatedUser;
         } else {
             log.info("Nessuna modifica rilevata per il profilo utente ID {}", userId);
-            return user; // Restituisce l'utente originale se non ci sono state modifiche
+            return user;
         }
     }
 

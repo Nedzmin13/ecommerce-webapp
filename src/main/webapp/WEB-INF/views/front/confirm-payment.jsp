@@ -5,7 +5,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<%-- Non serve <jsp:useBean> se il controller passa paypalClientId nel model --%>
 
 <!DOCTYPE html>
 <html lang="it">
@@ -18,13 +17,11 @@
 
 
 
-<%-- PAYPAL SDK SCRIPT --%>
-    <%-- Il Client ID viene preso dal model (${paypalClientId}) --%>
+
     <script src="https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR&intent=capture"></script>
     <style>
-        /* Stili per centrare i pulsanti PayPal se necessario */
         #paypal-button-container {
-            max-width: 750px; /* PayPal raccomanda max 750px */
+            max-width: 750px;
             margin: 20px auto;
         }
     </style>
@@ -43,7 +40,7 @@
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
         </div>
     </c:if>
-    <c:if test="${not empty paymentError}"> <%-- Per errori specifici di pagamento --%>
+    <c:if test="${not empty paymentError}">
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Errore Pagamento:</strong> ${paymentError}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -93,15 +90,12 @@
         <h4>Procedi con il Pagamento</h4>
         <p>Seleziona un metodo di pagamento per l'ordine <strong>#<c:out value="${order.orderNumber}"/></strong>.</p>
 
-        <%-- CONTENITORE PER I PULSANTI PAYPAL --%>
         <div id="paypal-button-container">
-            <!-- I pulsanti PayPal verranno renderizzati qui da JavaScript -->
         </div>
         <div id="paypal-message-container" class="mt-2"></div> <%-- Per messaggi di errore/successo da PayPal --%>
 
 
         <p class="mt-3"><small>Cliccando su un pulsante di pagamento, accetti i nostri termini e condizioni.</small></p>
-        <%-- Form per annullare l'ordine PENDING --%>
         <form action="<c:url value='/checkout/cancel-order/${order.id}'/>" method="post" class="mt-2">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Sei sicuro di voler annullare questo ordine? Dovrai ricominciare il checkout.')">Annulla Ordine</button>
@@ -109,22 +103,18 @@
     </div>
 </div>
 
-<%-- Commenta o crea il file partials/footer.jsp se necessario --%>
-<%-- <jsp:include page="../partials/footer.jsp" /> --%>
+
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 
-<%-- JAVASCRIPT PER RENDERIZZARE I PULSANTI PAYPAL --%>
 <script>
-    // Prendi i dati dalla pagina JSP (assicurati che siano disponibili e corretti)
-    const orderTotalAmountString = "${order.totalAmount}"; // Stringa dal JSP
-    const orderIdInternal = "${order.id}"; // ID del nostro ordine interno
+    const orderTotalAmountString = "${order.totalAmount}";
+    const orderIdInternal = "${order.id}";
     const csrfToken = "${_csrf.token}";
-    const csrfHeaderName = "${_csrf.headerName}"; // Potrebbe essere _csrf.parameterName se lo usi come parametro per fetch
+    const csrfHeaderName = "${_csrf.headerName}";
 
-    // Converti l'importo in un numero, gestendo la virgola se presente
     const orderTotalAmount = parseFloat(orderTotalAmountString.replace(',', '.'));
 
     const paypalMessageContainer = document.getElementById('paypal-message-container');
@@ -137,11 +127,11 @@
         paypal.Buttons({
             // STILE DEI PULSANTI (opzionale)
             style: {
-                layout: 'vertical', // 'horizontal' o 'vertical'
-                color:  'gold',     // 'gold', 'blue', 'silver', 'white', 'black'
-                shape:  'rect',     // 'rect', 'pill'
-                label:  'paypal',   // 'paypal', 'checkout', 'buynow', 'pay'
-                tagline: false      // Rimuove la tagline "The safer, easier way to pay"
+                layout: 'vertical',
+                color:  'gold',
+                shape:  'rect',
+                label:  'paypal',
+                tagline: false
             },
 
             createOrder: function(data, actions) {
@@ -150,7 +140,7 @@
                 return fetch('<c:url value="/api/paypal/create-order"/>/' + orderIdInternal, {
                     method: 'POST',
                     headers: {
-                        'Accept': 'application/json', // Specifica che ci aspettiamo JSON
+                        'Accept': 'application/json',
                         [csrfHeaderName]: csrfToken
                     }
                 }).then(function(res) {
@@ -168,18 +158,17 @@
                     }
                     console.log("PayPal: Ordine PayPal creato con ID:", orderData.id);
                     showPayPalMessage("Pronto per il pagamento...");
-                    return orderData.id; // Questo è l'ID dell'ordine PayPal
+                    return orderData.id;
                 }).catch(function(err) {
                     console.error('PayPal: Errore in createOrder:', err);
                     showPayPalMessage('Errore durante la preparazione del pagamento: ' + err.message, true);
-                    // Potresti voler disabilitare i pulsanti o fornire un modo per riprovare
                 });
             },
 
             onApprove: function(data, actions) {
-                console.log("PayPal: onApprove function triggered. Data:", data); // data contiene orderID e payerID
+                console.log("PayPal: onApprove function triggered. Data:", data);
                 showPayPalMessage("Processazione pagamento in corso...");
-                return fetch('<c:url value="/api/paypal/capture-order"/>/' + data.orderID, { // data.orderID è l'ID Ordine PayPal
+                return fetch('<c:url value="/api/paypal/capture-order"/>/' + data.orderID, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -195,18 +184,15 @@
                     return res.json();
                 }).then(function(captureData) {
                     console.log('PayPal: Pagamento catturato:', captureData);
-                    // captureData dovrebbe contenere lo stato del pagamento e l'ID del nostro ordine interno
-                    // se il backend lo restituisce
+
                     var internalOrderIdForRedirect = captureData.internalOrderId || orderIdInternal;
 
                     if (captureData.status === 'COMPLETED' || (captureData.details && captureData.details.status === 'COMPLETED') ) {
                         showPayPalMessage("Pagamento completato con successo!", false);
                         window.location.href = '<c:url value="/order/success"/>?orderId=' + internalOrderIdForRedirect + '&transactionId=' + (captureData.transactionId || data.orderID);
                     } else {
-                        // Caso in cui la cattura è avvenuta ma lo stato non è COMPLETED (raro con intent=capture)
                         console.warn("PayPal: Stato pagamento non COMPLETED:", captureData);
                         showPayPalMessage("Il pagamento è stato processato ma lo stato non è completo. Contatta l'assistenza.", true);
-                        // Potresti reindirizzare a una pagina di "pagamento in revisione" o errore
                         window.location.href = '<c:url value="/checkout/payment-pending"/>?orderId=' + internalOrderIdForRedirect;
                     }
                 }).catch(function(err) {
@@ -219,17 +205,14 @@
             onCancel: function(data) {
                 console.log("PayPal: onCancel function triggered. Data:", data);
                 showPayPalMessage("Pagamento annullato dall'utente.");
-                // Non reindirizzare subito, lascia l'utente sulla pagina di conferma.
-                // L'utente può decidere di riprovare o annullare l'ordine dal nostro sito.
-                // Se vuoi reindirizzare:
+
                 // window.location.href = '<c:url value="/checkout/confirm"/>/' + orderIdInternal + '?status=cancelled';
             },
 
             onError: function(err) {
                 console.error("PayPal: onError SDK function triggered:", err);
                 showPayPalMessage('Si è verificato un errore con PayPal: ' + err.toString(), true);
-                // Non reindirizzare automaticamente, potrebbe essere un errore temporaneo
-                // L'utente potrebbe voler riprovare
+
             }
         }).render('#paypal-button-container');
     } else {

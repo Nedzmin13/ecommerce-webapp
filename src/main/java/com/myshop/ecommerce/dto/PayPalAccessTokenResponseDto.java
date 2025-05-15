@@ -1,12 +1,12 @@
 package com.myshop.ecommerce.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty; // Utile per mappare i nomi JSON
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class PayPalAccessTokenResponseDto {
     private String scope;
-    @JsonProperty("access_token") // Mappa da snake_case JSON a camelCase Java
+    @JsonProperty("access_token")
     private String accessToken;
     @JsonProperty("token_type")
     private String tokenType;

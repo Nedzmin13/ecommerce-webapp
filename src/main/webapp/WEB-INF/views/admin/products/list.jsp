@@ -19,15 +19,15 @@
         .table th, .table td { vertical-align: middle; }
         .product-img-thumbnail { max-width: 60px; height: auto; border-radius: .25rem; }
         .action-buttons .btn { margin-right: 5px; }
-        .action-buttons form { margin-right: 5px; } /* Per il form di delete */
-        .page-item.disabled .page-link { color: #6c757d; } /* Stile per link paginazione disabilitati */
+        .action-buttons form { margin-right: 5px; }
+        .page-item.disabled .page-link { color: #6c757d; }
         .page-item.active .page-link { z-index: 3; color: #fff; background-color: #007bff; border-color: #007bff;}
     </style>
 </head>
 <body>
 <jsp:include page="../../partials/navbar.jsp" />
 
-<div class="container mt-3"> <%-- Usa container o container-fluid a seconda del layout --%>
+<div class="container mt-3">
     <jsp:include page="/WEB-INF/views/partials/_breadcrumbs.jsp" />
 </div>
 
@@ -152,6 +152,5 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<%-- Lo script confirmDelete è stato rimosso perché onsubmit gestisce la conferma --%>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %> <%-- Tag Form di Spring --%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
@@ -15,7 +15,7 @@
 
     <style>
         .register-container {
-            max-width: 550px; /* Leggermente più largo per nome/cognome */
+            max-width: 550px;
             margin: 50px auto;
             padding: 30px;
             border: 1px solid #ddd;
@@ -23,9 +23,9 @@
             background-color: #f9f9f9;
         }
         .error-message {
-            color: #dc3545; /* Colore rosso Bootstrap per errori */
+            color: #dc3545;
             font-size: 0.875em;
-            display: block; /* Assicura che vada a capo */
+            display: block;
             margin-top: .25rem;
         }
     </style>
@@ -35,19 +35,16 @@
     <div class="register-container">
         <h2 class="text-center mb-4">Registrati su MyShop</h2>
 
-        <%-- Mostra errori globali o messaggi flash (es. username/email già esistente) --%>
         <c:if test="${not empty errorMessage}">
             <div class="alert alert-danger">${errorMessage}</div>
         </c:if>
-        <%-- Errore specifico per password non corrispondenti (se impostato nel controller) --%>
         <c:if test="${not empty passwordError}">
             <div class="alert alert-danger">${passwordError}</div>
         </c:if>
 
 
-        <%-- Form di Registrazione con Spring Form Tags --%>
-        <%-- modelAttribute="userDto": si aspetta un oggetto chiamato "userDto" nel Model --%>
-        <form:form modelAttribute="userDto" action="${pageContext.request.contextPath}/register" method="post"> <%-- Assumiamo POST a /register --%>
+
+        <form:form modelAttribute="userDto" action="${pageContext.request.contextPath}/register" method="post">
 
             <%-- Username --%>
             <div class="form-group">

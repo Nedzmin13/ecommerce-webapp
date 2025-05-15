@@ -7,7 +7,7 @@ import com.myshop.ecommerce.exception.ResourceNotFoundException;
 import com.myshop.ecommerce.model.BreadcrumbItem;
 import com.myshop.ecommerce.repository.UserRepository;
 import com.myshop.ecommerce.service.OrderService;
-import com.myshop.ecommerce.service.UserService; // <-- IMPORT NECESSARIO
+import com.myshop.ecommerce.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +29,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.time.format.DateTimeFormatter; // Import per DateTimeFormatter
-import com.myshop.ecommerce.dto.ChangePasswordDto; // Importa il nuovo DTO
-import java.util.ArrayList; // Importa ArrayList
-import java.util.List;      // Importa List
+import java.time.format.DateTimeFormatter;
+import com.myshop.ecommerce.dto.ChangePasswordDto;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
@@ -43,17 +43,17 @@ public class CustomerController {
 
     private final UserRepository userRepository;
     private final OrderService orderService;
-    private final UserService userService; // <-- DICHIARA IL CAMPO
+    private final UserService userService;
 
     private static final int ORDERS_PAGE_SIZE = 10;
 
     @Autowired
     public CustomerController(UserRepository userRepository,
                               OrderService orderService,
-                              UserService userService) { // <-- AGGIUNGI AL COSTRUTTORE
+                              UserService userService) {
         this.userRepository = userRepository;
         this.orderService = orderService;
-        this.userService = userService; // <-- INIZIALIZZA
+        this.userService = userService;
     }
 
     @GetMapping("/profile")
@@ -76,8 +76,8 @@ public class CustomerController {
         // --- BREADCRUMB ---
         List<BreadcrumbItem> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new BreadcrumbItem("Home", "/"));
-        breadcrumbs.add(new BreadcrumbItem("Area Cliente", "/customer/profile")); // Link a se stesso o a una pagina "radice" dell'area cliente
-        breadcrumbs.add(new BreadcrumbItem("Il Mio Profilo", null)); // Pagina attuale
+        breadcrumbs.add(new BreadcrumbItem("Area Cliente", "/customer/profile"));
+        breadcrumbs.add(new BreadcrumbItem("Il Mio Profilo", null));
         model.addAttribute("breadcrumbs", breadcrumbs);
         // --- FINE BREADCRUMB ---
 
@@ -100,22 +100,19 @@ public class CustomerController {
             log.warn("Errore di validazione durante l'aggiornamento del profilo per {}: {}", currentUserDetails.getUsername(), bindingResult.getAllErrors());
             model.addAttribute("user", currentUserEntity);
             model.addAttribute("dateFormatter", DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-            if (!model.containsAttribute("changePasswordDto")) { // Assicura che changePasswordDto sia presente
+            if (!model.containsAttribute("changePasswordDto")) {
                 model.addAttribute("changePasswordDto", new ChangePasswordDto());
             }
             model.addAttribute("activePage", "customerProfile");
-            // --- BREADCRUMB PER FORM CON ERRORI ---
             List<BreadcrumbItem> breadcrumbs = new ArrayList<>();
             breadcrumbs.add(new BreadcrumbItem("Home", "/"));
             breadcrumbs.add(new BreadcrumbItem("Area Cliente", "/customer/profile"));
-            breadcrumbs.add(new BreadcrumbItem("Il Mio Profilo", null)); // La modifica avviene nella pagina profilo
+            breadcrumbs.add(new BreadcrumbItem("Il Mio Profilo", null));
             model.addAttribute("breadcrumbs", breadcrumbs);
-            // --- FINE BREADCRUMB ---
             return "customer/profile";
         }
 
         try {
-            // Usa this.userService
             this.userService.updateUserProfile(currentUserEntity.getId(), userProfileDto.getFirstName(), userProfileDto.getLastName());
             redirectAttributes.addFlashAttribute("successMessage", "Profilo aggiornato con successo!");
             log.info("Profilo per {} aggiornato.", currentUserDetails.getUsername());
@@ -150,8 +147,8 @@ public class CustomerController {
         // --- BREADCRUMB ---
         List<BreadcrumbItem> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new BreadcrumbItem("Home", "/"));
-        breadcrumbs.add(new BreadcrumbItem("Area Cliente", "/customer/profile")); // Link alla pagina profilo come "radice" dell'area cliente
-        breadcrumbs.add(new BreadcrumbItem("I Miei Ordini", null)); // Pagina attuale
+        breadcrumbs.add(new BreadcrumbItem("Area Cliente", "/customer/profile"));
+        breadcrumbs.add(new BreadcrumbItem("I Miei Ordini", null));
         model.addAttribute("breadcrumbs", breadcrumbs);
         // --- FINE BREADCRUMB ---
 
@@ -218,13 +215,13 @@ public class CustomerController {
             model.addAttribute("user", currentUserEntity);
             model.addAttribute("userProfileDto", new UserProfileDto(currentUserEntity.getFirstName(), currentUserEntity.getLastName()));
             model.addAttribute("dateFormatter", DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-            model.addAttribute("showChangePasswordSection", true); // Flag per JS per mostrare il form
+            model.addAttribute("showChangePasswordSection", true);
             model.addAttribute("activePage", "customerProfile");
             // --- BREADCRUMB PER FORM CON ERRORI ---
             List<BreadcrumbItem> breadcrumbs = new ArrayList<>();
             breadcrumbs.add(new BreadcrumbItem("Home", "/"));
             breadcrumbs.add(new BreadcrumbItem("Area Cliente", "/customer/profile"));
-            breadcrumbs.add(new BreadcrumbItem("Il Mio Profilo", null)); // La modifica avviene nella pagina profilo
+            breadcrumbs.add(new BreadcrumbItem("Il Mio Profilo", null));
             model.addAttribute("breadcrumbs", breadcrumbs);
             // --- FINE BREADCRUMB ---
             return "customer/profile";
@@ -256,10 +253,8 @@ public class CustomerController {
             userService.updateUserPassword(currentUserEntity.getId(), changePasswordDto.getNewPassword());
             redirectAttributes.addFlashAttribute("successMessage", "Password aggiornata con successo!");
             log.info("Password aggiornata con successo per l'utente: {}", currentUserDetails.getUsername());
-            // Invalida la sessione corrente per forzare un nuovo login? Opzionale ma consigliato per sicurezza.
-            // request.getSession().invalidate();
-            // return "redirect:/login?passwordChanged";
-        } catch (IllegalArgumentException e) { // Es. se si tenta di cambiare password per utente non LOCAL
+
+        } catch (IllegalArgumentException e) {
             log.warn("Errore cambio password per {}: {}", currentUserDetails.getUsername(), e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
@@ -267,6 +262,6 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("errorMessage", "Errore durante l'aggiornamento della password.");
         }
 
-        return "redirect:/customer/profile"; // Reindirizza sempre alla pagina del profilo
+        return "redirect:/customer/profile";
     }
 }

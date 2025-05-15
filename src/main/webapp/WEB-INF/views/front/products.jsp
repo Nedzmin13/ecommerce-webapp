@@ -37,10 +37,8 @@
 
 <div class="container mt-4">
     <div class="row">
-        <%-- Sidebar con Filtri --%>
         <div class="col-lg-3">
             <form id="filterForm" action="<c:url value='/products'/>" method="get">
-                <%-- Mantiene l'ordinamento corrente quando si applicano i filtri --%>
                 <c:if test="${not empty sortField}">
                     <input type="hidden" name="sort" value="${sortField},${sortDir}">
                 </c:if>
@@ -212,11 +210,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Script per gestire i link delle categorie in modo che inviino il form dei filtri
-    // Questo è un po' un workaround per non dover duplicare tutti i parametri nei link <a> delle categorie.
-    // Alternativa: usare solo il pulsante "Applica Filtri".
-    // L'onclick sui link delle categorie ora imposta un campo hidden e invia il form principale.
-    // Questo mantiene i valori di keyword e prezzo inseriti.
+
 </script>
 </body>
 </html>

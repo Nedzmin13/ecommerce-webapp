@@ -1,7 +1,7 @@
 package com.myshop.ecommerce.service.impl;
 
-import com.myshop.ecommerce.entity.Order; // Importa Order
-import com.myshop.ecommerce.entity.OrderItem; // Importa OrderItem
+import com.myshop.ecommerce.entity.Order;
+import com.myshop.ecommerce.entity.OrderItem;
 import com.myshop.ecommerce.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +12,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal; // Per formattare
-import java.text.NumberFormat; // Per formattare valuta
-import java.time.format.DateTimeFormatter; // Per formattare date
-import java.util.Locale; // Per il formato valuta
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -79,7 +78,7 @@ public class EmailServiceImpl implements EmailService {
 
         // Formattatori per data e valuta
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.ITALY); // Es. € 1.234,56
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.ITALY);
 
         StringBuilder textBuilder = new StringBuilder();
         textBuilder.append("Ciao ").append(order.getUser().getFirstName()).append(",\n\n");
@@ -105,8 +104,7 @@ public class EmailServiceImpl implements EmailService {
 
         if (order.getShipping() != null) {
             textBuilder.append("INDIRIZZO DI SPEDIZIONE:\n");
-            // Assumiamo che nome e cognome per la spedizione siano quelli dell'utente,
-            // se avessimo campi specifici in Shipping li useremmo.
+
             textBuilder.append(order.getUser().getFirstName()).append(" ").append(order.getUser().getLastName()).append("\n");
             textBuilder.append(order.getShipping().getAddressLine1()).append("\n");
             if (order.getShipping().getAddressLine2() != null && !order.getShipping().getAddressLine2().isEmpty()) {
@@ -121,10 +119,9 @@ public class EmailServiceImpl implements EmailService {
             textBuilder.append("\n");
         }
 
-        // Aggiungere dettagli pagamento se disponibili e rilevanti
         if (order.getPayment() != null) {
             textBuilder.append("DETTAGLI PAGAMENTO:\n");
-            textBuilder.append("Metodo: ").append(order.getPayment().getPaymentMethod().toString()).append("\n"); // Potremmo tradurre
+            textBuilder.append("Metodo: ").append(order.getPayment().getPaymentMethod().toString()).append("\n");
             textBuilder.append("ID Transazione: ").append(order.getPayment().getTransactionId()).append("\n");
             textBuilder.append("Data Pagamento: ").append(order.getPayment().getPaymentDate() != null ? order.getPayment().getPaymentDate().format(dateFormatter) : "N/D").append("\n\n");
         }
@@ -153,8 +150,7 @@ public class EmailServiceImpl implements EmailService {
         textBuilder.append("Ciao ").append(order.getUser().getFirstName()).append(",\n\n");
         textBuilder.append("Ci sono aggiornamenti per il tuo ordine #").append(order.getOrderNumber()).append(" su ").append(siteName).append(".\n\n");
 
-        String nuovoStato = order.getStatus().toString(); // Potremmo voler tradurre/formattare meglio lo stato
-        // Esempio di messaggi personalizzati per stato:
+        String nuovoStato = order.getStatus().toString();
         switch (order.getStatus()) {
             case PROCESSING:
                 nuovoStato = "In Preparazione";
@@ -164,7 +160,6 @@ public class EmailServiceImpl implements EmailService {
             case SHIPPED:
                 nuovoStato = "Spedito";
                 textBuilder.append("Buone notizie! Il tuo ordine è stato ").append(nuovoStato).append(".\n");
-                // textBuilder.append("Puoi tracciare la tua spedizione qui: [LINK TRACCIAMENTO]\n"); // TODO: Aggiungere link tracciamento se disponibile
                 break;
             case DELIVERED:
                 nuovoStato = "Consegnato";
@@ -181,20 +176,18 @@ public class EmailServiceImpl implements EmailService {
                 textBuilder.append("Si è verificato un problema con il pagamento del tuo ordine: ").append(nuovoStato).append(".\n");
                 textBuilder.append("Per favore, controlla i tuoi dati di pagamento o contattaci per assistenza.\n");
                 break;
-            case COMPLETED: // Se usi COMPLETED come stato finale dopo DELIVERED o per servizi digitali
+            case COMPLETED:
                 nuovoStato = "Completato";
                 textBuilder.append("Il tuo ordine è stato segnato come ").append(nuovoStato).append(".\n");
                 break;
-            default: // PENDING o altri stati
+            default:
                 textBuilder.append("Il nuovo stato del tuo ordine è: ").append(nuovoStato).append(".\n");
                 break;
         }
         textBuilder.append("\n");
 
         textBuilder.append("Puoi visualizzare i dettagli completi del tuo ordine accedendo al tuo account:\n");
-        // Assumendo che tu abbia un URL base per il sito e un modo per linkare al dettaglio ordine cliente
-        // String orderDetailUrl = siteUrl + "/customer/order/" + order.getId(); // Dovremmo passare siteUrl o costruirlo
-        // textBuilder.append(orderDetailUrl).append("\n\n");
+
         textBuilder.append("Grazie per aver scelto ").append(siteName).append(".\n\n");
 
         textBuilder.append("Cordiali saluti,\n");

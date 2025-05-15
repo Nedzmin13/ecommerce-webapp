@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-// Importa la classe corretta per costruire l'URL dalla request
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder; // <-- MODIFICA QUI
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -32,13 +31,13 @@ public class HomeController {
     private final UserService userService;
     private final EmailService emailService;
     private final CategoryService categoryService;
-    private final ProductService productService; // <-- DICHIARA IL CAMPO
+    private final ProductService productService;
 
     @Autowired
     public HomeController(UserService userService, EmailService emailService, CategoryService categoryService, ProductService productService) {
         this.userService = userService;
         this.emailService = emailService;
-        this.categoryService = categoryService; // Inizializza
+        this.categoryService = categoryService;
         this.productService = productService;
 
     }
@@ -65,7 +64,7 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String loginPage(Model model) { // Aggiungi Model se vuoi passare activePage
+    public String loginPage(Model model) {
         model.addAttribute("activePage", "login");
         return "auth/login";
     }
@@ -73,7 +72,7 @@ public class HomeController {
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("userDto", new UserRegistrationDto());
-        model.addAttribute("activePage", "register"); // Per la navbar attiva
+        model.addAttribute("activePage", "register");
         return "auth/register";
     }
 
@@ -118,8 +117,7 @@ public class HomeController {
             );
             log.info("Utente {} registrato con successo.", userDto.getUsername());
 
-            // Costruisci l'URL base del sito usando ServletUriComponentsBuilder
-            String siteUrl = ServletUriComponentsBuilder.fromRequestUri(request) // <-- MODIFICA QUI
+            String siteUrl = ServletUriComponentsBuilder.fromRequestUri(request)
                     .replacePath(request.getContextPath())
                     .build()
                     .toUriString();

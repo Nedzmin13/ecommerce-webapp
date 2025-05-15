@@ -2,10 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%-- Non serve fn:functions qui se non lo usiamo per activePage --%>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-    <div class="container"> <%-- Manteniamo il container per una buona struttura --%>
+    <div class="container">
         <a class="navbar-brand" href="<c:url value='/'/>">
             MyShop
         </a>
@@ -22,7 +21,6 @@
                     <a class="nav-link" href="<c:url value='/products'/>">Prodotti</a>
                 </li>
                 <sec:authorize access="hasRole('ADMIN')">
-                    <%-- Per l'admin, un link generico all'area admin o alla dashboard --%>
                     <li class="nav-item ${activePage == 'adminDashboard' || activePage == 'adminProducts' || activePage == 'adminCategories' || activePage == 'adminOrders' ? 'active' : ''}">
                         <a class="nav-link" href="<c:url value='/admin/dashboard'/>">Admin</a>
                     </li>

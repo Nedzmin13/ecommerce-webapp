@@ -1,21 +1,19 @@
-package com.myshop.ecommerce.service.impl; // o com.myshop.ecommerce.paypal
+package com.myshop.ecommerce.service.impl;
 
-// Assumiamo che PayPalAccessTokenResponse sia un DTO separato o static nested accessibile
-import com.myshop.ecommerce.dto.PayPalAccessTokenResponseDto; // Esempio se spostato in DTO
-
+import com.myshop.ecommerce.dto.PayPalAccessTokenResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;         // <-- IMPORT MANCANTE
-import org.springframework.http.HttpHeaders;       // <-- IMPORT MANCANTE
-import org.springframework.http.HttpStatus;        // <-- IMPORT MANCANTE
-import org.springframework.http.MediaType;         // <-- IMPORT MANCANTE
-import org.springframework.http.ResponseEntity;    // <-- IMPORT MANCANTE
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException; // <-- IMPORT MANCANTE
-import org.springframework.web.client.RestTemplate;             // <-- IMPORT MANCANTE
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class PayPalAuthService {
@@ -52,13 +50,13 @@ public class PayPalAuthService {
                 ResponseEntity<PayPalAccessTokenResponseDto> response = restTemplate.postForEntity(
                         getPayPalApiBaseUrl() + "/v1/oauth2/token",
                         request,
-                        PayPalAccessTokenResponseDto.class // Usa il DTO corretto
+                        PayPalAccessTokenResponseDto.class
                 );
 
                 if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                     PayPalAccessTokenResponseDto tokenResponse = response.getBody();
                     // ...
-                    this.accessToken = tokenResponse.getAccessToken(); // Usa il getter se usi Lombok e @JsonProperty
+                    this.accessToken = tokenResponse.getAccessToken();
                     this.tokenExpiryTime = System.currentTimeMillis() + (tokenResponse.getExpiresIn() - 10) * 1000L;
                     log.info("Nuovo token di accesso PayPal ottenuto. Scade tra circa {} secondi.", tokenResponse.getExpiresIn());
                 } else {

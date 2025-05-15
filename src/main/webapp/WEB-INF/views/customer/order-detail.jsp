@@ -4,7 +4,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%-- Non serve importare DateTimeFormatter qui se usiamo la variabile 'dateFormatter' dal model --%>
 
 <!DOCTYPE html>
 <html lang="it">
@@ -42,7 +41,7 @@
                 <h4>Informazioni Ordine</h4>
                 <p><strong>Data:</strong>
                     <c:if test="${not empty order.orderDate}">
-                        ${order.orderDate.format(dateFormatter)} <%-- CORRETTO --%>
+                        ${order.orderDate.format(dateFormatter)}
                     </c:if>
                 </p>
                 <p><strong>Stato:</strong> <span class="badge badge-primary"><c:out value="${order.status}"/></span></p>
@@ -87,7 +86,7 @@
             <h4 class="mt-4">Dettagli Pagamento</h4>
             <p><strong>Metodo:</strong> <c:out value="${order.payment.paymentMethod}"/></p>
             <p><strong>ID Transazione:</strong> <c:out value="${order.payment.transactionId}"/></p>
-            <p><strong>Data Pagamento:</strong> <%-- CORREZIONE QUI --%>
+            <p><strong>Data Pagamento:</strong>
                 <c:if test="${not empty order.payment.paymentDate}">
                     ${order.payment.paymentDate.format(dateFormatter)}
                 </c:if>

@@ -8,7 +8,6 @@ import com.myshop.ecommerce.model.Cart;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-// Rimuovi 'import java.util.List;' se non è più usato da nessun altro metodo
 import java.util.Optional;
 
 public interface OrderService {
@@ -37,7 +36,7 @@ public interface OrderService {
      * @param pageable L'oggetto Pageable per paginazione e ordinamento.
      * @return Una Pagina degli ordini dell'utente.
      */
-    Page<Order> findOrdersByUserPaginated(User user, Pageable pageable); // Questo è il metodo corretto
+    Page<Order> findOrdersByUserPaginated(User user, Pageable pageable);
 
     // Questo metodo è usato da PayPalController per salvare lo stato aggiornato e il pagamento
     void saveOrder(Order order);
@@ -45,7 +44,5 @@ public interface OrderService {
     Page<Order> findAllOrdersPaginated(Pageable pageable);
     Order updateOrderStatus(Long orderId, OrderStatus newStatus);
 
-    // --- RIMUOVI O COMMENTA QUESTA RIGA ---
-    // List<Order> findOrdersByUser(User user);
-    // ---------------------------------------
+
 }

@@ -20,13 +20,11 @@ public interface EmailService {
      */
     void sendRegistrationConfirmationEmail(String userEmail, String username, String siteUrl);
 
-    // Potremmo aggiungere altri metodi per email più complesse (HTML, allegati, template) in futuro
-    // void sendHtmlMessage(String to, String subject, String htmlBody);
-    // void sendMessageWithAttachment(String to, String subject, String text, String pathToAttachment);
+
 
 
     void sendOrderConfirmationEmail(Order order);
 
-    void sendOrderStatusUpdateEmail(Order order); // NUOVO METODO
+    void sendOrderStatusUpdateEmail(Order order);
 
 }

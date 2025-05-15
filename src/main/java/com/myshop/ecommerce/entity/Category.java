@@ -18,29 +18,21 @@ import java.util.Objects;
 public class Category {
 
     @Id
-    // Non mettiamo @GeneratedValue se gli ID sono specificati in data.sql
-    // e vogliamo che Hibernate li usi. Hibernate è abbastanza intelligente
-    // da usare gli ID forniti se non imposti una strategia di generazione esplicita
-    // o se la strategia lo permette. Per sicurezza, potremmo rimuovere @GeneratedValue
-    // SE E SOLO SE gli ID saranno SEMPRE forniti manualmente o da data.sql.
-    // Manteniamo IDENTITY per ora, data.sql con INSERT IGNORE dovrebbe funzionare.
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 50, unique = true)
     private String name;
 
-    @Column(length = 255) // Aggiunta colonna descrizione come nel tuo SQL
+    @Column(length = 255)
     private String description;
 
-    // Rimuoviamo lo slug per ora
-    // @Column(nullable = false, length = 60, unique = true)
-    // private String slug;
+
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Product> products;
 
-    // Costruttore aggiornato (opzionale)
     public Category(String name, String description) {
         this.name = name;
         this.description = description;

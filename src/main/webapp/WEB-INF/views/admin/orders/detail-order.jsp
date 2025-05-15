@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ page import="com.myshop.ecommerce.enums.OrderStatus" %> <%-- Importa l'enum OrderStatus --%>
+<%@ page import="com.myshop.ecommerce.enums.OrderStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
@@ -20,7 +20,7 @@
 <body>
 <jsp:include page="../../partials/navbar.jsp" />
 
-<div class="container mt-3"> <%-- Usa container o container-fluid a seconda del layout --%>
+<div class="container mt-3">
     <jsp:include page="/WEB-INF/views/partials/_breadcrumbs.jsp" />
 </div>
 
@@ -45,7 +45,6 @@
         </div>
         <hr>
 
-        <%-- ... (Card Informazioni Ordine, Indirizzo, Pagamento come prima) ... --%>
         <div class="card mb-4">
             <div class="card-header"><h4>Informazioni Ordine</h4></div>
             <div class="card-body">
@@ -95,7 +94,6 @@
         </div>
 
         <div class="card mt-2">
-                <%-- ... (Tabella Articoli Ordinati come prima) ... --%>
             <div class="card-header"><h4>Articoli Ordinati</h4></div>
             <div class="card-body p-0">
                 <table class="table table-striped table-bordered mb-0">
@@ -138,12 +136,10 @@
                             <div class="form-group">
                                 <label for="newStatus" class="sr-only">Nuovo Stato:</label>
                                 <select name="newStatus" id="newStatus" class="form-control">
-                                        <%-- Popoliamo dinamicamente con i valori dell'enum OrderStatus --%>
-                                        <%-- È necessario passare OrderStatus.values() dal controller al model --%>
-                                        <%-- o fare l'import e iterare direttamente se possibile --%>
+
                                     <c:forEach items="${orderStatusValues}" var="statusOpt">
                                         <option value="${statusOpt}" ${statusOpt == order.status ? 'selected' : ''}>
-                                            <c:out value="${statusOpt}"/> <%-- TODO: Tradurre questi valori per la UI --%>
+                                            <c:out value="${statusOpt}"/>
                                         </option>
                                     </c:forEach>
                                 </select>

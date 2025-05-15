@@ -83,7 +83,6 @@ public class ProductController {
                     categoryId = null;
                 }
             }
-            // ... (logica titolo come prima) ...
 
             model.addAttribute("productPage", productPage);
             model.addAttribute("categories", categories);

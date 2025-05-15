@@ -32,15 +32,13 @@ public class CustomOAuth2User implements OAuth2User {
     }
 
     @Override
-    public String getName() { // Questo è l'ID/nome principale per OAuth2User
-        return localUser.getUsername(); // O potresti restituire oauth2User.getName() se preferisci l'ID del provider
+    public String getName() {
+        return localUser.getUsername();
     }
 
-    // --- AGGIUNGI QUESTO METODO ---
     public String getUsername() {
         return localUser.getUsername();
     }
-    // -----------------------------
 
     public String getEmail() {
         return localUser.getEmail();
@@ -51,7 +49,6 @@ public class CustomOAuth2User implements OAuth2User {
     }
 
     public String getFullName() {
-        // Gestisci il caso in cui firstName o lastName potrebbero essere null o vuoti
         String fn = localUser.getFirstName() != null ? localUser.getFirstName() : "";
         String ln = localUser.getLastName() != null ? localUser.getLastName() : "";
         if (!fn.isEmpty() && !ln.isEmpty()) {
@@ -61,6 +58,6 @@ public class CustomOAuth2User implements OAuth2User {
         } else if (!ln.isEmpty()) {
             return ln;
         }
-        return localUser.getUsername(); // Fallback all'username se nome e cognome sono vuoti
+        return localUser.getUsername();
     }
 }

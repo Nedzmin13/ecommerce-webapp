@@ -63,9 +63,7 @@
     <div class="text-center">
         <h4>Procedi con il Pagamento</h4>
         <p>Verrai reindirizzato a PayPal per completare il pagamento.</p>
-        <%-- Qui integreremo il pulsante PayPal --%>
         <div id="paypal-button-container" style="max-width: 400px; margin: 20px auto;">
-            <!-- PayPal Button Will Be Rendered Here -->
             <p class="text-muted"><em>(Integrazione PayPal in arrivo)</em></p>
             <a href="#" class="btn btn-warning btn-lg disabled">Paga con PayPal (Disabilitato)</a>
         </div>
@@ -74,7 +72,7 @@
 
 </div>
 
-<jsp:include page="../partials/footer.jsp" /> <%-- Commenta se non esiste --%>
+<jsp:include page="../partials/footer.jsp" />
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

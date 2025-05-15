@@ -20,9 +20,8 @@ public class Shipping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Usiamo optional=false per indicare che l'ordine è obbligatorio
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", nullable = false, unique = true) // Assicura che una spedizione sia legata a un solo ordine
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order;
 
     @Column(name = "address_line1", nullable = false, length = 255)

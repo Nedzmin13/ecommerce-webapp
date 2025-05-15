@@ -12,7 +12,7 @@ public class ShippingAddressDto {
     private String addressLine1;
 
     @Size(max = 255, message = "Indirizzo (Linea 2) troppo lungo")
-    private String addressLine2; // Opzionale
+    private String addressLine2;
 
     @NotBlank(message = "Città obbligatoria")
     @Size(max = 100, message = "Nome città troppo lungo")
@@ -20,10 +20,10 @@ public class ShippingAddressDto {
 
     @NotBlank(message = "Provincia/Regione obbligatoria")
     @Size(max = 100, message = "Nome provincia/regione troppo lungo")
-    private String state; // Provincia/Regione/Stato
+    private String state;
 
     @NotBlank(message = "CAP obbligatorio")
-    @Size(min = 2, max = 20, message = "CAP non valido") // Adattare min/max al formato CAP
+    @Size(min = 2, max = 20, message = "CAP non valido")
     private String postalCode;
 
     @NotBlank(message = "Paese obbligatorio")
@@ -31,6 +31,5 @@ public class ShippingAddressDto {
     private String country;
 
     @Size(max = 20, message = "Numero di telefono troppo lungo")
-    // Potremmo aggiungere @Pattern per validare il formato del telefono se necessario
-    private String phone; // Opzionale, ma spesso utile
+    private String phone;
 }

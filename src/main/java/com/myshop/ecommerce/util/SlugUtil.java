@@ -12,17 +12,12 @@ public class SlugUtil {
 
     public static String toSlug(String input) {
         if (input == null) {
-            return ""; // O lanciare eccezione se uno slug non può essere vuoto
+            return "";
         }
-        // Rimuove spazi bianchi iniziali/finali
         String nowhitespace = WHITESPACE.matcher(input.trim()).replaceAll("-");
-        // Normalizza caratteri accentati ecc. in ASCII base
         String normalized = Normalizer.normalize(nowhitespace, Normalizer.Form.NFD);
-        // Rimuove caratteri non latini (tranne lettere, numeri, trattino)
         String slug = NONLATIN.matcher(normalized).replaceAll("");
-        // Rimuove trattini all'inizio o alla fine
         slug = EDGESDHASHES.matcher(slug).replaceAll("");
-        // Converte in minuscolo
         return slug.toLowerCase(Locale.ENGLISH);
     }
 }

@@ -29,13 +29,11 @@
     <h2>Checkout</h2>
     <hr>
 
-    <%-- Messaggi Flash --%>
     <c:if test="${not empty checkoutMessage}">
         <div class="alert alert-info">${checkoutMessage}</div>
     </c:if>
 
     <div class="row">
-        <%-- Riepilogo Carrello (Colonna Sinistra/Superiore) --%>
         <div class="col-lg-5 order-lg-2 mb-4">
             <div class="checkout-summary">
                 <h4>Riepilogo Ordine</h4>
@@ -56,7 +54,6 @@
                                 <fmt:formatNumber value="${cart.totalAmount}" type="currency" currencySymbol="€ "/>
                             </td>
                         </tr>
-                            <%-- Aggiungere costi spedizione e tasse in futuro --%>
                         <tr class="font-weight-bold h5">
                             <td>Totale da Pagare</td>
                             <td class="text-right">
@@ -69,11 +66,9 @@
             </div>
         </div>
 
-        <%-- Form Indirizzo Spedizione (Colonna Destra/Inferiore) --%>
         <div class="col-lg-7 order-lg-1">
             <h4>Indirizzo di Spedizione</h4>
             <form:form modelAttribute="shippingAddressDto" action="${pageContext.request.contextPath}/checkout/submit-address" method="post">
-                <%-- addressLine1 --%>
                 <div class="form-group">
                     <form:label path="addressLine1">Indirizzo (Via, Piazza, Numero Civico)</form:label>
                     <form:input path="addressLine1" cssClass="form-control" placeholder="Es. Via Roma, 123" required="true"/>
@@ -133,7 +128,7 @@
     </div>
 </div>
 
-<jsp:include page="../partials/footer.jsp" /> <%-- Commenta se non esiste --%>
+<jsp:include page="../partials/footer.jsp" />
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>

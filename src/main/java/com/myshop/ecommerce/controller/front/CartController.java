@@ -10,11 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest; // Per accedere alla sessione
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/cart") // Prefisso per tutte le mappature del carrello
+@RequestMapping("/cart")
 public class CartController {
 
     private static final Logger log = LoggerFactory.getLogger(CartController.class);
@@ -41,7 +41,7 @@ public class CartController {
                             @RequestParam(value = "quantity", defaultValue = "1") int quantity,
                             HttpSession session,
                             RedirectAttributes redirectAttributes,
-                            HttpServletRequest request) { // Per ottenere l'URL di provenienza
+                            HttpServletRequest request) {
 
         log.info("Richiesta aggiunta prodotto ID {} (quantità: {}) al carrello. Sessione ID: {}", productId, quantity, session.getId());
         try {
@@ -91,7 +91,6 @@ public class CartController {
     }
 
     // --- Rimuovi Prodotto dal Carrello (POST /cart/remove/{productId}) ---
-    // Usiamo POST anche per la rimozione per coerenza e per evitare CSRF se fosse un link GET
     @PostMapping("/remove/{productId}")
     public String removeFromCart(@PathVariable("productId") Long productId,
                                  HttpSession session,
@@ -105,7 +104,7 @@ public class CartController {
             log.error("Errore imprevisto durante la rimozione del prodotto ID {} dal carrello", productId, e);
             redirectAttributes.addFlashAttribute("cartErrorMessage", "Errore durante la rimozione del prodotto.");
         }
-        return "redirect:/cart"; // Torna sempre alla pagina del carrello
+        return "redirect:/cart";
     }
 
     // --- Svuota Carrello (POST /cart/clear) ---

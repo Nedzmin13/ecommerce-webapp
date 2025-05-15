@@ -41,9 +41,8 @@ public class AdminProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
 
-    // Assicurati che questa cartella esista: src/main/resources/static/images/products/
     private static final String UPLOAD_DIR_PRODUCTS = "src/main/resources/static/images/products/";
-    private static final int ADMIN_PRODUCTS_PAGE_SIZE = 10; // Definisci la costante se usata
+    private static final int ADMIN_PRODUCTS_PAGE_SIZE = 10;
 
     @Autowired
     public AdminProductController(ProductService productService, CategoryService categoryService) {
@@ -63,9 +62,6 @@ public class AdminProductController {
             Sort pageSort = Sort.by(sortDirection, sortField);
             Pageable pageable = PageRequest.of(page, size, pageSort);
 
-            // Usa getFilteredProducts se vuoi mantenere la possibilità di futuri filtri qui,
-            // altrimenti crea un findAllPaginated in ProductService se non esiste.
-            // Per ora, assumiamo che getFilteredProducts con tutti i filtri null funzioni.
             Page<Product> productPage = productService.getProductsByFilter(null, null, pageable);
 
             model.addAttribute("productPage", productPage);
@@ -85,7 +81,7 @@ public class AdminProductController {
         } catch (Exception e) {
             log.error("Errore recupero lista prodotti admin", e);
             model.addAttribute("errorMessage", "Errore caricamento prodotti.");
-            return "admin/products/list"; // o una pagina di errore
+            return "admin/products/list";
         }
     }
 
@@ -133,14 +129,12 @@ public class AdminProductController {
 
         log.debug("Tentativo salvataggio prodotto: {}, Immagine caricata: {}", product.getName(), imageFile.getOriginalFilename());
 
-        // Mantiene l'imageUrl esistente se si modifica e non si carica un nuovo file.
-        // Questo valore viene dal campo hidden <form:hidden path="imageUrl"/>
+
         String existingImageUrl = product.getImageUrl();
 
         if (bindingResult.hasErrors()) {
             log.warn("Errore di validazione durante salvataggio prodotto: {}", bindingResult.getAllErrors());
-            // Ripopola i dati necessari per tornare al form
-            commonFormAttributes(model, product, product.getId() == null);
+                        commonFormAttributes(model, product, product.getId() == null);
             return "admin/products/form";
         }
 
@@ -154,11 +148,10 @@ public class AdminProductController {
             }
             try {
                 String generatedFileName = saveUploadedFile(imageFile);
-                // Se si sta modificando e c'era una vecchia immagine DIVERSA dalla nuova, cancellala
                 if (!isNew && existingImageUrl != null && !existingImageUrl.isEmpty() && !existingImageUrl.equals(generatedFileName)) {
                     deleteProductImage(existingImageUrl);
                 }
-                product.setImageUrl(generatedFileName); // Imposta il nome della nuova immagine
+                product.setImageUrl(generatedFileName);
                 log.info("Immagine {} caricata e salvata come {}", imageFile.getOriginalFilename(), generatedFileName);
             } catch (IOException e) {
                 log.error("Errore durante il salvataggio dell'immagine {}: {}", imageFile.getOriginalFilename(), e.getMessage(), e);
@@ -167,11 +160,10 @@ public class AdminProductController {
                 return "admin/products/form";
             }
         } else if (!isNew) {
-            // Nessun nuovo file caricato, l'imageUrl è già impostato dal campo hidden
-            // quindi product.getImageUrl() contiene già il valore corretto (quello vecchio)
+
             log.debug("Nessuna nuova immagine caricata per il prodotto ID {}. Immagine attuale: {}", product.getId(), product.getImageUrl());
         }
-        // Se è un nuovo prodotto e non c'è file, product.getImageUrl() sarà null o vuoto (dal binding iniziale)
+
 
         try {
             if (isNew) {
@@ -224,7 +216,6 @@ public class AdminProductController {
         return "redirect:/admin/products";
     }
 
-    // Metodo helper per popolare attributi comuni del form in caso di errore
     private void commonFormAttributes(Model model, Product product, boolean isNew) {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("pageTitle", isNew ? "Aggiungi Nuovo Prodotto" : "Modifica Prodotto: " + (product.getName() != null ? product.getName() : ""));
@@ -236,7 +227,6 @@ public class AdminProductController {
         model.addAttribute("breadcrumbs", breadcrumbs);
     }
 
-    // Metodo helper per salvare il file
     private String saveUploadedFile(MultipartFile file) throws IOException {
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileExtension = "";
@@ -248,7 +238,7 @@ public class AdminProductController {
 
         Path uploadPath = Paths.get(UPLOAD_DIR_PRODUCTS);
         if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath); // Crea la directory se non esiste
+            Files.createDirectories(uploadPath);
         }
         Path filePath = uploadPath.resolve(generatedFileName);
         try (InputStream inputStream = file.getInputStream()) {

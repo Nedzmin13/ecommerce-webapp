@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> <%-- Per formattare i prezzi --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> <%-- Per le funzioni JSTL --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
 <!DOCTYPE html>
@@ -22,16 +22,15 @@
     <link rel="stylesheet" href="<c:url value='/css/custom.css'/>">
 
     <style>
-        /* Stili specifici per la homepage, potrebbero andare in custom.css */
         body {
             font-family: 'Open Sans', sans-serif;
             color: #495057;
-            background-color: #f8f9fa; /* Sfondo leggermente grigio */
+            background-color: #f8f9fa;
         }
 
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Montserrat', sans-serif;
-            font-weight: 500; /* Medio per i titoli */
+            font-weight: 500;
         }
 
         .hero-section {
@@ -39,7 +38,7 @@
             background-size: cover;
             background-position: center center;
             color: white;
-            padding: 10rem 1rem; /* Aumentato padding */
+            padding: 10rem 1rem;
             text-align: center;
             margin-bottom: 3rem;
         }
@@ -80,7 +79,7 @@
             margin-bottom: 1.5rem;
             background-color: #fff;
             border-radius: .5rem;
-            overflow: hidden; /* Per contenere l'immagine */
+            overflow: hidden;
         }
         .category-card:hover {
             transform: translateY(-8px);
@@ -94,7 +93,7 @@
         .category-card .card-body { padding: 1.25rem; }
         .category-card .card-title { font-size: 1.15rem; font-weight: 500; color: #333; margin-bottom:0.75rem; }
 
-        .product-card-home { /* Stile per le card prodotto nella homepage */
+        .product-card-home {
             margin-bottom: 30px;
             height: 100%;
             display: flex;
@@ -123,7 +122,7 @@
             padding: 2.5rem 0;
         }
         .bg-light-custom {
-            background-color: #f8f9fa!important; /* Sfondo leggermente grigio */
+            background-color: #f8f9fa!important;
         }
     </style>
 </head>
@@ -140,7 +139,6 @@
 </header>
 
 <div class="container">
-    <%-- Messaggio di Successo Login (se presente) --%>
     <c:if test="${param.loginSuccess != null || param.oauthLoginSuccess != null}">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="fas fa-check-circle mr-2"></i> Login effettuato con successo! Bentornato.
@@ -175,7 +173,7 @@
             <h2 class="section-title">Ultimi Arrivi</h2>
             <div class="row">
                 <c:forEach items="${latestProducts}" var="product">
-                    <div class="col-md-4 col-lg-3 mb-4"> <%-- 4 prodotti per riga su schermi grandi, 3 su medi --%>
+                    <div class="col-md-4 col-lg-3 mb-4">
                         <div class="card product-card-home">
                             <c:url var="productImageUrlHome" value="/images/products/${product.imageUrl != null && not empty product.imageUrl ? product.imageUrl : 'placeholder.png'}"/>
                             <a href="<c:url value='/product/${product.id}'/>">
@@ -188,9 +186,7 @@
                                 <p class="card-text price">
                                     <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="€ " />
                                 </p>
-                                    <%--
-                                    <p class="card-text small text-muted"><c:out value="${product.category.name}"/></p>
-                                    --%>
+
                             </div>
                             <div class="card-footer text-center">
                                 <a href="<c:url value='/product/${product.id}'/>" class="btn btn-outline-secondary btn-sm mr-1">Dettagli</a>
@@ -214,11 +210,9 @@
     </c:if>
 </div>
 
-<%-- TODO: Aggiungere un Footer --%>
 <footer class="py-5 bg-dark text-white mt-5">
     <div class="container text-center">
         <p class="m-0">Copyright © MyShop ${java.time.Year.now()}</p>
-        <%-- <p class="m-0"><a href="#" class="text-white-50">Privacy Policy</a> | <a href="#" class="text-white-50">Termini di Servizio</a></p> --%>
     </div>
 </footer>
 

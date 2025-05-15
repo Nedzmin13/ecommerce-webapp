@@ -21,11 +21,11 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false) // Un OrderItem DEVE appartenere a un Order
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false) // Un OrderItem DEVE riferirsi a un Product
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -33,12 +33,11 @@ public class OrderItem {
     private Integer quantity;
 
     @Column(name = "price_per_unit", nullable = false, precision = 10, scale = 2)
-    private BigDecimal pricePerUnit; // Prezzo al momento dell'ordine
+    private BigDecimal pricePerUnit;
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice; // quantity * pricePerUnit
 
-    // Costruttore utile
     public OrderItem(Order order, Product product, Integer quantity, BigDecimal pricePerUnit) {
         this.order = order;
         this.product = product;
@@ -47,7 +46,6 @@ public class OrderItem {
         this.totalPrice = pricePerUnit.multiply(BigDecimal.valueOf(quantity));
     }
 
-    // Equals e hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

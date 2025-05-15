@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface UserService {
 
-    // Metodo per registrare un nuovo utente LOCAL
     User registerNewUser(String username, String email, String password, String firstName, String lastName);
 
     Optional<User> findByUsername(String username);

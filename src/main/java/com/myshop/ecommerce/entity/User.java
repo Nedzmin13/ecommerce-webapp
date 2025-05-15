@@ -23,7 +23,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = {"roles", "orders", "password"}) // Escludere relazioni e dati sensibili
+@ToString(exclude = {"roles", "orders", "password"})
 public class User {
 
     @Id
@@ -36,7 +36,7 @@ public class User {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 128) // Lunghezza per hash password
+    @Column(nullable = false, length = 128)
     private String password;
 
     @Column(name = "first_name", length = 50)
@@ -46,11 +46,11 @@ public class User {
     private String lastName;
 
     @Column(nullable = false)
-    private boolean enabled = true; // Default a true per semplicità iniziale
+    private boolean enabled = true;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private AuthProvider provider = AuthProvider.LOCAL; // Default a LOCAL
+    private AuthProvider provider = AuthProvider.LOCAL;
 
     @Column(name = "provider_id", length = 255) // Può essere lungo per alcuni provider
     private String providerId;

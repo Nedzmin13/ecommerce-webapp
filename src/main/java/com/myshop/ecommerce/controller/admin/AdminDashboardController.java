@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @Controller
-@RequestMapping("/admin") // Mappiamo alla radice dell'area admin per questo controller
+@RequestMapping("/admin")
 public class AdminDashboardController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminDashboardController.class);
@@ -24,11 +24,11 @@ public class AdminDashboardController {
     public String showAdminDashboard(Model model) {
         log.info("Accesso alla dashboard amministratore.");
         model.addAttribute("pageTitle", "Dashboard Amministratore");
-        model.addAttribute("activePage", "adminDashboard"); // Per navbar
+        model.addAttribute("activePage", "adminDashboard");
 
         List<BreadcrumbItem> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new BreadcrumbItem("Admin Area", "/admin/dashboard")); // Link a se stesso o alla radice admin
-        breadcrumbs.add(new BreadcrumbItem("Dashboard", null)); // Pagina attuale
+        breadcrumbs.add(new BreadcrumbItem("Admin Area", "/admin/dashboard"));
+        breadcrumbs.add(new BreadcrumbItem("Dashboard", null));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         return "admin/dashboard";

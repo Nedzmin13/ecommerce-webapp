@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "orders") // "order" è spesso una parola chiave SQL
+@Table(name = "orders")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,10 +43,9 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private OrderStatus status = OrderStatus.PENDING; // Default a PENDING
+    private OrderStatus status = OrderStatus.PENDING;
 
-    // Cascading ALL: se cancello un ordine, cancello anche items, shipping, payment
-    // orphanRemoval=true: se rimuovo un item dalla lista, viene cancellato dal DB
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -60,13 +59,11 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // Metodo helper per aggiungere item e mantenere la coerenza bidirezionale
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
         item.setOrder(this);
     }
 
-    // Metodo helper per impostare shipping e mantenere coerenza
     public void setShipping(Shipping shipping) {
         this.shipping = shipping;
         if (shipping != null) {
@@ -74,7 +71,6 @@ public class Order {
         }
     }
 
-    // Metodo helper per impostare payment e mantenere coerenza
     public void setPayment(Payment payment) {
         this.payment = payment;
         if (payment != null) {
@@ -82,7 +78,6 @@ public class Order {
         }
     }
 
-    // Equals e hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

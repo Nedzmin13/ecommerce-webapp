@@ -18,7 +18,7 @@
 <body>
 <jsp:include page="../../partials/navbar.jsp" />
 
-<div class="container mt-3"> <%-- Usa container o container-fluid a seconda del layout --%>
+<div class="container mt-3">
     <jsp:include page="/WEB-INF/views/partials/_breadcrumbs.jsp" />
 </div>
 
@@ -95,7 +95,6 @@
                             <a href="<c:url value='/admin/orders/${order.id}'/>" class="btn btn-sm btn-info" title="Visualizza Dettagli">
                                 <i class="fas fa-eye"></i>
                             </a>
-                                <%-- Aggiungeremo pulsanti per modificare stato dopo --%>
                         </td>
                     </tr>
                 </c:forEach>

@@ -17,12 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.format.DateTimeFormatter; // Per passare il formatter alla vista
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/orders") // Prefisso per tutte le mappature in questo controller
+@RequestMapping("/admin/orders")
 public class AdminOrderController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminOrderController.class);
@@ -76,30 +76,27 @@ public class AdminOrderController {
         } catch (Exception e) {
             log.error("Errore durante il recupero lista ordini admin", e);
             model.addAttribute("errorMessage", "Errore durante il caricamento degli ordini.");
-            return "admin/orders/list-orders"; // Ritorna comunque alla lista con un messaggio
+            return "admin/orders/list-orders";
         }
     }
 
-    // --- READ: Dettaglio Singolo Ordine (GET /admin/order/{orderId}) ---
-    @GetMapping("/{orderId}") // Cambiato da /order/{orderId} per evitare ambiguità con /admin/orders
+    @GetMapping("/{orderId}")
     public String viewOrderDetail(@PathVariable("orderId") Long orderId, Model model, RedirectAttributes redirectAttributes) {
         log.debug("Richiesta dettaglio ordine admin ID: {}", orderId);
         try {
-            Order order = orderService.findOrderById(orderId) // findOrderById già carica le relazioni
+            Order order = orderService.findOrderById(orderId)
                     .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
             model.addAttribute("order", order);
-            model.addAttribute("dateFormatter", DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")); // Formatter per la vista
+            model.addAttribute("dateFormatter", DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
             model.addAttribute("orderStatusValues", OrderStatus.values());
 
             model.addAttribute("activePage", "adminOrders");
-            // --- BREADCRUMB ---
             List<BreadcrumbItem> breadcrumbs = new ArrayList<>();
             breadcrumbs.add(new BreadcrumbItem("Admin Area", "/admin/dashboard"));
             breadcrumbs.add(new BreadcrumbItem("Gestione Ordini", "/admin/orders"));
             breadcrumbs.add(new BreadcrumbItem("Dettaglio Ordine #" + order.getOrderNumber(), null));
             model.addAttribute("breadcrumbs", breadcrumbs);
-            // --- FINE BREADCRUMB ---
             return "admin/orders/detail-order";
 
         } catch (ResourceNotFoundException ex) {
@@ -116,7 +113,7 @@ public class AdminOrderController {
     @PostMapping("/update-status/{orderId}")
     public String updateOrderStatus(
             @PathVariable("orderId") Long orderId,
-            @RequestParam("newStatus") String newStatusString, // Riceve lo stato come Stringa dal form
+            @RequestParam("newStatus") String newStatusString,
             RedirectAttributes redirectAttributes) {
 
         log.info("Richiesta aggiornamento stato per ordine ID {} al nuovo stato: {}", orderId, newStatusString);
@@ -130,7 +127,7 @@ public class AdminOrderController {
             log.info("Stato ordine ID {} aggiornato a {}", orderId, newStatus);
 
 
-        } catch (IllegalArgumentException e) { // Se lo stato stringa non è un valore enum valido
+        } catch (IllegalArgumentException e) {
             log.error("Stato ordine non valido fornito: {}", newStatusString, e);
             redirectAttributes.addFlashAttribute("errorMessage", "Stato ordine non valido: " + newStatusString);
         } catch (ResourceNotFoundException e) {
@@ -141,6 +138,6 @@ public class AdminOrderController {
             redirectAttributes.addFlashAttribute("errorMessage", "Errore durante l'aggiornamento dello stato dell'ordine.");
         }
 
-        return "redirect:/admin/orders/" + orderId; // Torna alla pagina dettaglio ordine
+        return "redirect:/admin/orders/" + orderId;
     }
 }

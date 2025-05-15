@@ -22,7 +22,7 @@
         .dashboard-card .card-title {
             font-size: 1.5rem;
         }
-        .dashboard-card .fas { /* Icone più grandi nelle card */
+        .dashboard-card .fas {
             font-size: 2.5em;
             opacity: 0.3;
             position: absolute;
@@ -46,50 +46,7 @@
     <p>Benvenuto nell'area di amministrazione di MyShop, <sec:authentication property="principal.username"/>!</p>
     <p>Da qui puoi gestire i contenuti e le operazioni del tuo negozio online.</p>
 
-    <%-- Esempio di statistiche (da popolare dal controller in futuro) --%>
-    <%--
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Prodotti Totali</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">${totalProducts > 0 ? totalProducts : 'N/D'}</div>
-                        </div>
-                        <div class="col-auto"><i class="fas fa-box fa-2x text-gray-300"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-             <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ordini Pendenti</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">${pendingOrders > 0 ? pendingOrders : '0'}</div>
-                        </div>
-                        <div class="col-auto"><i class="fas fa-hourglass-half fa-2x text-gray-300"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-             <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Utenti Registrati</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">${totalUsers > 0 ? totalUsers : 'N/D'}</div>
-                        </div>
-                        <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    --%>
+
 
     <h4>Accesso Rapido</h4>
     <div class="row mt-3">
@@ -129,7 +86,6 @@
                 <i class="fas fa-tags"></i>
             </div>
         </div>
-        <%-- Aggiungere altre card per utenti, impostazioni, ecc. --%>
     </div>
 </div>
 

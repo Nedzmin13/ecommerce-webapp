@@ -16,7 +16,7 @@
 <body>
 <jsp:include page="../../partials/navbar.jsp" />
 
-<div class="container mt-3"> <%-- Usa container o container-fluid a seconda del layout --%>
+<div class="container mt-3">
     <jsp:include page="/WEB-INF/views/partials/_breadcrumbs.jsp" />
 </div>
 

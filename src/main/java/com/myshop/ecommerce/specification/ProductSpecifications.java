@@ -2,22 +2,21 @@ package com.myshop.ecommerce.specification;
 
 import com.myshop.ecommerce.entity.Product;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component; // Opzionale, ma utile se vuoi iniettarla
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.Predicate; // Importa Predicate
+import javax.persistence.criteria.Predicate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List; // Importa List
+import java.util.List;
 
-@Component // Rende questa classe un bean, se necessario per iniezione (non strettamente per metodi statici)
+@Component
 public class ProductSpecifications {
 
-    // Specifica per cercare per keyword nel nome o nella descrizione
     public static Specification<Product> keywordSearch(String keyword) {
         return (root, query, criteriaBuilder) -> {
             if (!StringUtils.hasText(keyword)) {
-                return criteriaBuilder.conjunction(); // Nessun filtro se la keyword è vuota (restituisce tutto)
+                return criteriaBuilder.conjunction();
             }
             String likePattern = "%" + keyword.toLowerCase() + "%";
             Predicate namePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), likePattern);
@@ -30,9 +29,8 @@ public class ProductSpecifications {
     public static Specification<Product> categoryFilter(Long categoryId) {
         return (root, query, criteriaBuilder) -> {
             if (categoryId == null) {
-                return criteriaBuilder.conjunction(); // Nessun filtro se categoryId è nullo
+                return criteriaBuilder.conjunction();
             }
-            // Unisciti all'entità Category e filtra per il suo ID
             return criteriaBuilder.equal(root.get("category").get("id"), categoryId);
         };
     }
@@ -41,7 +39,7 @@ public class ProductSpecifications {
     public static Specification<Product> priceGreaterThanOrEqual(BigDecimal minPrice) {
         return (root, query, criteriaBuilder) -> {
             if (minPrice == null) {
-                return criteriaBuilder.conjunction(); // Nessun filtro se minPrice è nullo
+                return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice);
         };
@@ -51,7 +49,7 @@ public class ProductSpecifications {
     public static Specification<Product> priceLessThanOrEqual(BigDecimal maxPrice) {
         return (root, query, criteriaBuilder) -> {
             if (maxPrice == null) {
-                return criteriaBuilder.conjunction(); // Nessun filtro se maxPrice è nullo
+                return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice);
         };
@@ -82,10 +80,9 @@ public class ProductSpecifications {
         }
 
         if (specs.isEmpty()) {
-            return Specification.where(null); // Nessun filtro, restituisce tutto
+            return Specification.where(null);
         }
 
-        // Combina tutte le specifiche con AND
         Specification<Product> result = specs.get(0);
         for (int i = 1; i < specs.size(); i++) {
             result = Specification.where(result).and(specs.get(i));

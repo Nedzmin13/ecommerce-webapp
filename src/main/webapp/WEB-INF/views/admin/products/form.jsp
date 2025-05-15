@@ -31,11 +31,7 @@
 
     <form:form modelAttribute="product" action="${pageContext.request.contextPath}/admin/products/save" method="post" enctype="multipart/form-data">
         <form:hidden path="id" />
-        <%-- Il campo createdAt non dovrebbe essere modificabile, @CreationTimestamp lo gestisce --%>
-        <%-- Se non vuoi inviarlo o vederlo nel binding, rimuovilo. Altrimenti, lascialo hidden. --%>
-        <%-- <form:hidden path="createdAt" /> --%>
 
-        <%-- CAMPO NASCOSTO PER CONSERVARE L'IMAGEURL ESISTENTE SE NON SI CARICA UN NUOVO FILE --%>
         <form:hidden path="imageUrl" />
 
         <div class="form-group">
@@ -81,7 +77,6 @@
             <label for="imageFile">Immagine Prodotto</label>
             <input type="file" name="imageFile" id="imageFile" class="form-control-file" accept="image/jpeg, image/png, image/gif"/>
             <small class="form-text text-muted">Carica un nuovo file (JPG, PNG, GIF). Se non selezioni un file, l'immagine attuale (se presente) verrà mantenuta.</small>
-                <%-- Visualizza l'immagine attuale se presente --%>
             <c:if test="${not empty product.id && not empty product.imageUrl}">
                 <div class="mt-2">
                     <p class="mb-1">Immagine attuale: <c:out value="${product.imageUrl}"/></p>

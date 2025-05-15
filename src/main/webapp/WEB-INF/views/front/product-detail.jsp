@@ -33,28 +33,24 @@
             font-size: 2rem;
             color: #28a745;
         }
-        /* Stile per i breadcrumb (già in _breadcrumbs.jsp, ma possiamo sovrascrivere o aggiungere) */
-        /* .breadcrumb { background-color: #f8f9fa; } */
+
     </style>
 </head>
 <body>
 <jsp:include page="../partials/navbar.jsp" />
 
-<%-- INCLUDI BREADCRUMB QUI --%>
 <div class="container mt-3">
     <jsp:include page="../partials/_breadcrumbs.jsp" />
 </div>
 
-<div class="container mt-4"> <%-- Contenitore principale leggermente spostato --%>
+<div class="container mt-4">
     <c:choose>
-        <c:when test="${not empty product}"> <%-- Verifica se product non è nullo --%>
+        <c:when test="${not empty product}">
             <div class="row">
-                <!-- Immagine Prodotto -->
                 <div class="col-md-6 text-center">
                     <c:url var="detailProductImageUrl" value="/images/products/${product.imageUrl != null && not empty product.imageUrl ? product.imageUrl : 'placeholder.png'}"/>
                     <img src="${detailProductImageUrl}" alt="<c:out value="${product.name}"/>" class="product-detail-image">
                 </div>
-                <!-- Dettagli Prodotto e Azioni -->
                 <div class="col-md-6">
                     <h1><c:out value="${product.name}"/></h1>
                     <h4 class="text-muted">

@@ -28,11 +28,10 @@
                 <h2>Errore 404 - Pagina Non Trovata</h2>
                 <div class="error-details">
                     Spiacenti, la pagina che stai cercando non esiste o è stata spostata.
-                    <c:if test="${not empty errorMessage}"> <%-- Mostra messaggio specifico se passato --%>
+                    <c:if test="${not empty errorMessage}">
                         <br/><em>Dettaglio: ${errorMessage}</em>
                     </c:if>
-                    <c:if test="${not empty exception}"> <%-- In DEV potresti mostrare dettagli eccezione (con cautela) --%>
-                        <%-- <br/><pre>${exception.message}</pre> --%>
+                    <c:if test="${not empty exception}">
                     </c:if>
                 </div>
                 <div class="error-actions">
@@ -50,11 +49,10 @@
     </div>
 </main>
 
-<%-- Footer opzionale --%>
 <%-- <jsp:include page="../partials/footer.jsp" /> --%>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script> <%-- Per icone FontAwesome --%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 </body>
 </html>

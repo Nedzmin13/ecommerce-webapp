@@ -43,7 +43,7 @@ public class Payment {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @CreationTimestamp // O impostare manualmente quando il pagamento viene completato
+    @CreationTimestamp
     @Column(name = "payment_date")
     private LocalDateTime paymentDate;
 
