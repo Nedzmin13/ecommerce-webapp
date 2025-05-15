@@ -1,0 +1,10 @@
+package com.myshop.ecommerce.repository;
+
+import com.myshop.ecommerce.entity.OrderItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+    // Eventuali query specifiche per OrderItem se necessario
+}
